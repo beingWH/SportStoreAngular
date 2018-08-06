@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Product} from './product.model';
-import {HttpClient, HttpParams, HttpRequest} from '@angular/common/http';
+import {HttpClient, HttpRequest} from '@angular/common/http';
 import {Order} from './order.model';
 
 
@@ -13,20 +13,14 @@ export class RestDatasource {
   baseUrl: string;
 
   constructor(private http: HttpClient) {
-    this.baseUrl = '${PROTOCOL}://${location.hostname}:${PORT}/';
+    this.baseUrl = `${PROTOCOL}://${location.hostname}:${PORT}/`;
   }
 
   getProducts(): Observable<Product> {
-    return this.sendRequest('GET', 'products');
+    return this.http.get<Product>(this.baseUrl + 'products');
   }
 
   saveOrder(order: Order): Observable<Order> {
-    return this.sendRequest('POST', 'orders', order);
+    return this.http.post<Order>(this.baseUrl + 'orders', order);
   }
-
-  private sendRequest(verb: string, url: string, body?: Product | Order): Observable<Product | Order> {
-    return this.http.request(new HttpRequest(verb, url, body)).map(response => response.json());
-  }
-
-
 }
